@@ -9,7 +9,7 @@ $limit = $_GET['limit'];
 <link REL="stylesheet" type="text/css" href="stylesheet.css" />
 <body>
 <?php
-$search_dir = $GLOBALS['thumbnail_dir'] . DIRECTORY_SEPARATOR;
+$search_dir = $comment_dir . DIRECTORY_SEPARATOR;
 
 $lines; // store sorted lines
 

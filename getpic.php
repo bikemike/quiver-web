@@ -10,13 +10,18 @@ $rotate = $_GET['rotate'];
 $cmd = $_GET['cmd'];
 $type = $_GET['type'];
 
-$img_file = $dir . "/" . $image;
+$img_file = addPaths($picture_dir,addPaths($dir, $image));
+
+$thumbdir = addPaths($thumbnail_dir,$dir);
+$smalldir = addPaths($small_dir,$dir);
+
+$thumb_file = addPaths($thumbdir,$image);
+$small_file = addPaths($smalldir,$image);
+
 $tmp_file = "/tmp/exif_img_" . randomNum(10);
 if ($type == "thumbnail")
 {
-	$thumb=exif_thumbnail($dir . "/" .$image,$wid,$hei,$tp);
-	//Header('Content-type: '  . image_type_to_mime_type($tp));
-	//echo $thumb;
+	$thumb=exif_thumbnail($img_file,$wid,$hei,$tp);
 	if ($thumb)
 	{
 		$fhand = @fopen($tmp_file,"w+");
@@ -38,9 +43,9 @@ if(getFileType($image) == "video")
 	$tmpfile = $tmppath . "00000005.jpg";
 
 	// mplayer generates a frame
-	$mplayer_cmd = "cd $tmppath; $mplayer_path $mplayer_params '$pics_parent_dir/$dir/$image' > /dev/null";
+	$cwd = getcwd();
+	$mplayer_cmd = "cd $tmppath; $mplayer_path $mplayer_params '$cwd/$dir/$image' > /dev/null";
 	
-//	echo $mplayer_cmd;
 	system($mplayer_cmd);
 	
 	$src = imlib_load_image($tmpfile);
@@ -155,20 +160,34 @@ else
 	// dump as JPEG to the browser
 	imlib_image_set_format($dst,"jpeg");			    
 	Header('Content-type: image/' . imlib_image_format($src));
-	imlib_dump_image($dst,$err,50);
+	if ($type=="thumbnail")
+	{
+		imlib_dump_image($dst,$err,$thumbnail_quality);
+	}
+	else if ($type == "small")
+	{
+		imlib_dump_image($dst,$err,$small_quality);
+	}
+	else
+	{
+		// default to 80
+		imlib_dump_image($dst,$err,80);
+	}
 
 	// store if required (only thumbnails right now)
 	if ($cmd == "store" && $type == "thumbnail")
 	{
-		if (false == file_exists("$thumbnail_dir/$dir")) makeDirectory ("$thumbnail_dir/$dir");
-		imlib_save_image($dst,"$thumbnail_dir/$dir/$image", $err, $thumbnail_quality);
-		chmod ("$thumbnail_dir/$dir/$image",0664);
+		if (false == file_exists($thumbdir)) 
+			makeDirectory ($thumbdir);
+		imlib_save_image($dst,$thumb_file, $err, $thumbnail_quality);
+		chmod ($thumb_file,0664);
 	}
 	if ($cmd == "store" && $type == "small")
 	{
-		if (false == file_exists("$small_dir/$dir")) makeDirectory ("$small_dir/$dir");
-		imlib_save_image($dst,"$small_dir/$dir/$image", $err, $small_quality);
-		chmod ("$small_dir/$dir/$image",0664);
+		if (false == file_exists($smalldir)) 
+			makeDirectory ($smalldir);
+		imlib_save_image($dst,$small_file, $err, $small_quality);
+		chmod ($small_file,0664);
 	}
 
 	imlib_free_image($src);

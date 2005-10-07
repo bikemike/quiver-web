@@ -5,22 +5,37 @@
 
 $config = parse_ini_file("config.ini",TRUE);
 
-$base_directory = $config['picture']['dir'];
+if (!isset($config['setup']['complete']))
+{
+	// show the setup screen
+	errorRedirect("setup.php");
+}
 
-$pics_parent_dir = "/home/candice/public_html/pics/";
+$data_dir = "data";
+$separator = "/";
+$picture_dir = $data_dir . $separator . "pictures";
 
-$thumbnail_dir = $config['image_thumbnail']['dir'];
+if (!file_exists($picture_dir))
+{
+	if ( !symlink($config['directory']['pictures'],$picture_dir) )
+	{
+		errorRedirect("setup.php");
+	}
+}
+
+$thumbnail_dir = $data_dir . $separator . "thumbnail";
 $thumbnail_size = $config['image_thumbnail']['width'];
 $thumbnail_quality = $config['image_thumbnail']['quality'];
 
-$small_dir = $config['image_small']['dir'];
+$small_dir = $data_dir . $separator . "small";
 $small_size = $config['image_small']['width'];
 $small_quality = $config['image_small']['quality'];
 
-$movie_icon = $config['movie']['dir'];
+$movie_icon = $config['movie']['overlay'];
 $mplayer_path = $config['movie']['mplayer_path'];
 $mplayer_params = $config['movie']['mplayer_params'];
 
-$commentlog = $config['comment']['log'];
+$comment_dir = $data_dir . $separator . "comments";
+$commentlog = $data_dir . $separator . "comment_log.txt";
 
 ?>

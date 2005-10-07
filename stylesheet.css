@@ -16,7 +16,6 @@ table{
     empty-cells: show;
     padding: 0px;
     font-size:8pt;
-    margin:auto;
     border-collapse: collapse;
     border-spacing: 0px;
     
@@ -89,4 +88,20 @@ tr.selected{
     background-color: #cdf;
     padding:55;
     margin:55;
+}
+
+h1
+{
+	border:1px solid #ccf;
+	background: #ddf;
+	padding: 5px;
+}
+#content{
+	border: 1px solid #aaf;
+	padding: 5px;
+	margin-left:auto;
+	margin-right:auto;
+	width:80%;
+	background: #eef;
+	color:blue;
 }

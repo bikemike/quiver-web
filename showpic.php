@@ -7,7 +7,7 @@ $delay = $_GET['delay'];
 $type = $_GET['type'];
 $view = $_GET['view'];
 
-$dir = fixDirectory($dir);
+$dir = getValidDirectory($dir);
 $images = getImageList($dir);
 $prev = getPrevImage($image,$images);
 $next = getNextImage($image,$images);
@@ -61,7 +61,7 @@ print "<br><br>";
 if($type != "original")
 print "</center>";
 
-$lines = @file($thumbnail_dir . "/" . $dir . "/" . $image . ".cmt");
+$lines = @file(addPaths($comment_dir,addPaths($dir,$image)) . ".cmt");
 if($lines){
 	print "<b>comments:</b><br><br>";
 	foreach($lines as $line_num => $line){

@@ -1,14 +1,18 @@
 <?php
+require_once("functions.php");
+
 $comment = $_POST['comment'];
 $dir = stripslashes($_POST['dir']);
 $image = $_POST['image'];
 $name = $_POST['name'];
 $type = $_POST['type'];
 $view = $_POST['view'];
-require_once("functions.php");
     if($comment)
     {
-        $fp = fopen($thumbnail_dir . "/".$dir."/".$image.".cmt", "a");
+		$realDir = addPaths($comment_dir,$dir);
+		makeDirectory($realDir);
+		$commentFile = addPaths($realDir,$image) . ".cmt";
+        $fp = fopen($commentFile, "a");
         if($fp)
         {
             $date = date("Y.m.d.H:i", time());
