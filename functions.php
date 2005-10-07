@@ -46,7 +46,7 @@ function deHTML($string)
 
 function getRandomImage($dir, $type, $view, $delay)
 {
-	$thumbnail_dir = $GLOBALS['thumbnail_dir'];
+	$picture_dir = $GLOBALS['picture_dir'];
 	$small_dir = $GLOBALS['small_dir'];
 	$base_dir = $GLOBALS['base_directory'];
 	$tmpfile = randomNum(10);
@@ -54,7 +54,8 @@ function getRandomImage($dir, $type, $view, $delay)
 	$lines=array(); // store sorted lines
 	if (strstr($_SERVER['SERVER_SOFTWARE'],"Linux"))
 	{
-		$handle = popen("find $base_dir/ -path '$thumbnail_dir' -prune -o -path '$small_dir' -prune -o -name '*.*' -print","r");
+		$cmd = "find $picture_dir/ -name '*.*' -print";
+		$handle = popen($cmd,"r");
 		while ($line=trim(fgets($handle)))
 		{
 			array_push($lines,$line);
@@ -77,8 +78,11 @@ function getRandomImage($dir, $type, $view, $delay)
 	}
 	
 	$line_number = rand(0, sizeof($lines));
+
+	$file = $lines[$line_number];
+	$file = str_replace($picture_dir . "/","",$file);
 	
-	$path_parts = pathinfo($lines[$line_number]);
+	$path_parts = pathinfo($file);
 	$path_parts["basename"] = chop($path_parts["basename"]);
 	$path_parts["basename"] = urlencode($path_parts["basename"]);
 
@@ -88,8 +92,6 @@ function getRandomImage($dir, $type, $view, $delay)
 		$delay = "";
 	$url = "showpic.php?dir=" . $path_parts["dirname"] . "&image=" . $path_parts["basename"] . "&type=$type&view=$view$delay";
 
-
-	chdir_base();
 	
 	errorRedirect($url);
 }
@@ -425,7 +427,6 @@ function showDetailedIndex ($dir,$list,$view){
 			}
 		}
 		print "</td></tr>";
-		chdir_base();
 		if ($color == "odd")
 		{
 			$color = "even";
@@ -563,7 +564,7 @@ function getOriginalImage ($dir,$file,$rotate=""){
 	$path_parts = pathinfo($_SERVER['SCRIPT_FILENAME']);
 	if ($rotate)
 		return "<img class=original src=\"getpic.php?type=original&w=$width&h=$height&image=$file&dir=$dir&rotate=$rotate\" width=$width height=$height\">";
-	return "<img class=original src=\"$dir/$file\" width=$width height=$height\">";
+	return "<img class=original src=\"$realPath\" width=$width height=$height\">";
 }
 
 function errorRedirect ($location,$error=NULL){
@@ -730,7 +731,6 @@ function addPaths($path1,$path2,$separator="/")
 
 function getImageList ($dir){
 	$dir = addPaths($GLOBALS['picture_dir'] , $dir);
-	//chdir($dir);
 	$images = array(); //array to hold image list
 	
 	if ($handle = @opendir($dir)) {
@@ -743,7 +743,6 @@ function getImageList ($dir){
 			}
 		}
 	}
-	//chdir_base();
 	sort($images);
 	return $images;
 }
