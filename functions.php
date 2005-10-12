@@ -750,12 +750,16 @@ function getImageList ($dir){
 // ensure the directory is valid
 function getValidDirectory($dir)
 {
+	//remove any escape characters
+	$dir = str_replace("\\","",$dir);
 	$pic_dir = $GLOBALS['picture_dir'];
+	// get the real directory name
 	$pic_link_dir = realpath($pic_dir);
 
 	$dir = addPaths($pic_link_dir, $dir);
 	$dir = realpath($dir);
 	
+	// replace the real directory with the relative location
 	$dir = str_replace($pic_link_dir,$pic_dir,$dir);
 
 	$pos = strpos($dir,$pic_dir);
