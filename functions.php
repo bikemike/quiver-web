@@ -395,6 +395,7 @@ function showDirectoryIndex ($dir,$dirs, $view){
 
 function showDetailedIndex ($dir,$list,$view){
 	$thumbnail_dir = $GLOBALS['thumbnail_dir'];
+	$picture_dir = $GLOBALS['picture_dir'];
 	?>
 	<table border=0 cellpadding=3 cellspacing=1 width=100%>
 	<tr bgcolor="#cccccc"><th width=100>thumbnail</th><!--<th width=20>save</th>--><th width=120>info</th><th width=400>comments</th></tr>
@@ -402,7 +403,7 @@ function showDetailedIndex ($dir,$list,$view){
 	$color="odd";
 	foreach ($list as $item)
 	{
-		$realPath = addPaths ($thumbnail_dir, addPaths($dir,$item));
+		$realPath = addPaths ($picture_dir, addPaths($dir,$item));
 		print "<tr class=\"$color\"><td class=thumbnail width=110 align=center>";
 		print getImageHTML($dir . "/" . $item,"thumbnail", $view);
 		print "</td><!--<td class=checkbox><input type=checkbox name='images[]' value='$item'>--></td><td>";
