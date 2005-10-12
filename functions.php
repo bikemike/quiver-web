@@ -396,6 +396,7 @@ function showDirectoryIndex ($dir,$dirs, $view){
 function showDetailedIndex ($dir,$list,$view){
 	$thumbnail_dir = $GLOBALS['thumbnail_dir'];
 	$picture_dir = $GLOBALS['picture_dir'];
+	$comment_dir = $GLOBALS['comment_dir'];
 	?>
 	<table border=0 cellpadding=3 cellspacing=1 width=100%>
 	<tr bgcolor="#cccccc"><th width=100>thumbnail</th><!--<th width=20>save</th>--><th width=120>info</th><th width=400>comments</th></tr>
