@@ -13,7 +13,7 @@ $search_dir = $comment_dir . DIRECTORY_SEPARATOR;
 
 $lines; // store sorted lines
 
-if (strstr($_SERVER['SERVER_SOFTWARE'],"Linux"))
+if (PHP_OS == "Linux")
 {
 	$handle = popen("find $search_dir -iname \"*.cmt\"","r");
 
