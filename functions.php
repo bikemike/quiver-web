@@ -52,7 +52,7 @@ function getRandomImage($dir, $type, $view, $delay)
 	$tmpfile = randomNum(10);
 
 	$lines=array(); // store sorted lines
-	if (strstr($_SERVER['SERVER_SOFTWARE'],"Linux"))
+	if (PHP_OS == "Linux")
 	{
 		$cmd = "find $picture_dir/ -name '*.*' -print";
 		$handle = popen($cmd,"r");
