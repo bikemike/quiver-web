@@ -49,11 +49,13 @@ else
 if ($type!="original")
 {
 	print getImageHTML("$dir/$image","small", $view, $rotate);
+	/*
 	print "<br>rotate: ";
 	print "<a href=\"$PHP_SELF?image=$image&dir=$dir&view=$view&type=$type\">normal</a> | ";
 	print "<a href=\"$PHP_SELF?image=$image&dir=$dir&view=$view&type=$type&rotate=90\">90</a> | ";
 	print "<a href=\"$PHP_SELF?image=$image&dir=$dir&view=$view&type=$type&rotate=180\">180</a> | ";
 	print "<a href=\"$PHP_SELF?image=$image&dir=$dir&view=$view&type=$type&rotate=270\">270</a>";
+	*/
 }
 else print "<center>" . getImageHTML("$dir/$image","original",$view, $rotate) . "</center>";
 print "<br><br>";
@@ -87,7 +89,8 @@ comment: <input type=text name=comment size=30>
 </table>
 <?
 showNavBar($image, $images, $dir, $type, $view);
+showCopyright();
 ?>
-php script by <a href="http://morrison.dyndns.org/">mike morrison</a> (c) 2002, modified by donn morrison
+
 </body>
 </html>

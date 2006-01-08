@@ -23,6 +23,11 @@ function getFileType($filename)
 	}
 }
 
+function showCopyright()
+{
+	echo "php script by <a href=\"http://morrison.dyndns.org/\">mike</a> and <a href=\"http://donn.dyndns.org/\">donn</a> morrison<br>Copyright &copy; 2006";
+}
+
 function randomNum($numDigits)
 {
 	if ($numDigits <= 0)
@@ -740,7 +745,8 @@ function getImageList ($dir){
 		readdir($handle);
 
 		while (false !== ($file = readdir($handle))) {
-			if (false == @is_dir($file)){
+			if (!is_dir(addPaths($dir,$file)))
+			{
 				array_push($images,$file);
 			}
 		}

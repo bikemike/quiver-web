@@ -31,7 +31,8 @@ if ($view=="detailed") showDetailedIndex($dir,$imagelist,$view);
 else showCompactIndex($dir,$imagelist,$view);
 print "</tr></td></table>";
 showNavBar(NULL, NULL, $dir, $type, $view);
+showCopyright();
 ?>
-php script by <a href="http://morrison.dyndns.org/">mike morrison</a> (c) 2002, modified by donn morrison
+
 </body>
 </html>
