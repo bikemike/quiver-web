@@ -217,7 +217,7 @@ function getImageHTML ($filePath,$type, $view, $rotate="") {
 	
 	if(getFileType($filePath) == "image")
 	{
-		$exif = exif_read_data ($realPath,'IFD0');
+		$exif = @exif_read_data ($realPath,'IFD0');
 		$orientation = $exif['Orientation'];
 		if ($orientation == 6){
 			$rotate += 90;
@@ -250,7 +250,7 @@ function getImageHTML ($filePath,$type, $view, $rotate="") {
 		else if(getFileType($filePath) == "video")
 		{
 				$imagehtml = getSmallImage($path_parts["dirname"],$path_parts["basename"],$rotate);
-				$linkStart = "<a href=\"$filePath\">";
+				$linkStart = "<a href=\"$realPath\">";
 		}
 		else
 		{
@@ -267,7 +267,7 @@ function getImageHTML ($filePath,$type, $view, $rotate="") {
 		else if(getFileType($filePath) == "video")
 		{
 				$imagehtml = getSmallImage($path_parts["dirname"],$path_parts["basename"]);
-				$linkStart = "<a href=\"$filePath\">";
+				$linkStart = "<a href=\"$realPath\">";
 		}
 		else
 		{
@@ -375,15 +375,29 @@ function showDirectoryIndex ($dir,$dirs, $view){
 	
 	?>
 	<table border=0 cellpadding=3 cellspacing=1 width=100%>
-	<tr bgcolor="#cccccc"><th width=10>directory</th><th width=20>pics</th><th width=150>album name</th></tr>
+	<tr bgcolor="#cccccc"><th width=10>directory</th><th width=120>items</th><th>album name</th></tr>
 	<?
 	$color = "odd";
 	for ($i=0;$i< sizeof($dirs) ; $i++){
 
+		$num_pics = count(getImageList($full_dir."/".$dirs[$i],1));
+		$num_dirs = count(getDirectoryList($full_dir."/".$dirs[$i],1));
 		print "<tr class=\"$color\"><td><a href=\"$PHP_SELF?dir=$dir/$dirs[$i]&view=$view\">";
 		print getImageHTML($full_dir. "/" . $dirs[$i],"folder", $view);
-		$num_pics = count(getImageList($full_dir."/".$dirs[$i],1));
-		print "</a></td><td>$num_pics</td><td>";
+		print "</a></td><td>";
+		if ($num_dirs)
+			print "$num_dirs dir";
+		if (1 < $num_dirs)
+			print "s";
+		if ($num_dirs && $num_pics)
+			print ", ";
+		if ($num_pics)
+			print "$num_pics pic";
+		if (1 < $num_pics)
+			print "s";
+		if (!$num_dirs && !$num_pics)
+			print "empty";
+		print"</td><td>";
 		if($dirs[$i] != "..")
 			print "<a href=\"$PHP_SELF?dir=$dir/$dirs[$i]&view=$view\">" . $dirs[$i] . "</a></td></tr>";
 		else

@@ -19,9 +19,9 @@ $thumb_file = addPaths($thumbdir,$image);
 $small_file = addPaths($smalldir,$image);
 
 $tmp_file = "/tmp/exif_img_" . randomNum(10);
-if ($type == "thumbnail")
+if ($type == "thumbnail" && "video" != getFileType($image))
 {
-	$thumb=exif_thumbnail($img_file,$wid,$hei,$tp);
+	$thumb=@exif_thumbnail($img_file,$wid,$hei,$tp);
 	if ($thumb)
 	{
 		$fhand = @fopen($tmp_file,"w+");
@@ -44,9 +44,10 @@ if(getFileType($image) == "video")
 
 	// mplayer generates a frame
 	$cwd = getcwd();
-	$mplayer_cmd = "cd $tmppath; $mplayer_path $mplayer_params '$cwd/$dir/$image' > /dev/null";
+	$mplayer_cmd = "cd $tmppath; $mplayer_path $mplayer_params '$cwd/$img_file' > /dev/null";
 	
 	system($mplayer_cmd);
+	
 	
 	$src = imlib_load_image($tmpfile);
 	
