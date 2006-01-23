@@ -77,7 +77,7 @@ if ($type == "original")
 {
 	if ($rotate != 0)
 	{
-		$cmd = "jpegtran -copy all -rotate " .   $rotate . " " . $img_file;
+		$cmd = "jpegtran -copy all -rotate " .   $rotate . " " . escapeshellarg($img_file);
 		Header('Content-type: image/jpeg');
 		$fp = popen($cmd,"r");
 		fpassthru($fp);

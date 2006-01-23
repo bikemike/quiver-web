@@ -25,7 +25,7 @@ function getFileType($filename)
 
 function showCopyright()
 {
-	echo "php script by <a href=\"http://morrison.dyndns.org/\">mike</a> and <a href=\"http://donn.dyndns.org/\">donn</a> morrison<br>Copyright &copy; 2006";
+	echo "php script by <a href=\"http://mike.dyndns.org/\">mike</a> and <a href=\"http://donn.dyndns.org/\">donn</a> morrison<br>Copyright &copy; 2006";
 }
 
 function randomNum($numDigits)
@@ -153,7 +153,6 @@ function showNavBar($image, $images, $dir, $type, $view)
 	array_pop($dirs);
 	$parent = join(DIRECTORY_SEPARATOR,$dirs);
 
-	echo $parent;
 	if ("" == $dir)
 		$up_dir = "up a level";
 	else
