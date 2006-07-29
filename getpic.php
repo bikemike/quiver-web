@@ -19,7 +19,8 @@ $thumb_file = addPaths($thumbdir,$image);
 $small_file = addPaths($smalldir,$image);
 
 $tmp_file = "/tmp/exif_img_" . randomNum(10);
-if ($type == "thumbnail" && "video" != getFileType($image))
+$tmp_file_rotated = "/tmp/exif_img_" . randomNum(10);
+if ($type == "thumbnail")
 {
 	$thumb=@exif_thumbnail($img_file,$wid,$hei,$tp);
 	if ($thumb)
@@ -32,7 +33,14 @@ if ($type == "thumbnail" && "video" != getFileType($image))
 			$img_file = $tmp_file;
 		}
 	}
-		
+
+	// Rotate portrait thumbnails using jpegtran
+	// because they turn out really blurry with imlib
+	if ($rotate != 0)
+	{
+		$cmd = "jpegtran -copy all -outfile " . $tmp_file_rotated . " -rotate " . $rotate . " " . $img_file;
+		`$cmd > /dev/null 2>&1`;
+	}
 }
 
 if(getFileType($image) == "video")
@@ -79,9 +87,10 @@ if ($type == "original")
 	{
 		$cmd = "jpegtran -copy all -rotate " .   $rotate . " " . escapeshellarg($img_file);
 		Header('Content-type: image/jpeg');
-		$fp = popen($cmd,"r");
-		fpassthru($fp);
-		fclose($fp);
+		print `$cmd`;
+		#$fp = popen($cmd,"r");
+		#fpassthru($fp);
+		#fclose($fp);
 	}
 	else
 	{
@@ -92,7 +101,7 @@ if ($type == "original")
 else
 {
 	$dst = imlib_create_image($w,$h);
-	imlib_blend_image_onto_image($dst,$src,0,0,0, $width,$height,0,0,$w,$h,false,fase,true);
+	imlib_blend_image_onto_image($dst,$src,0,0,0, $width,$height,0,0,$w,$h,false,false,true);
 
 	// leave a water mark if the image is a video frame
 	// this makes it easy to tell which thumbnails are videos
@@ -108,9 +117,7 @@ else
 			// make icon semi transparent
 			imlib_image_modify_alpha($watermark, 150);
 					
-			// shrink icon for thumbnails
-	//		if($type == "thumbnail")
-				$watermark = imlib_create_scaled_image($watermark, $wm_w, $wm_h);
+			$watermark = imlib_create_scaled_image($watermark, $wm_w, $wm_h);
 
 			// draw a simple border to distinguish it from dark backgrounds
 			$colour = 150;
@@ -135,27 +142,43 @@ else
 		}
 	}
 
-
-
+/*	if(!$rotate)
+	{
+		$dst = imlib_create_cropped_scaled_image($src, 0,0, $width,$height,$w, $h);
+	}
+*/
 	if($rotate)
 	{
-
 		if($rotate == 90 || $rotate == 270)
 		{
 			// width becomes height
 			$tmp = $h;
 			$h = $w;
 			$w = $tmp;
+
+			$tmp = $height;
+			$height = $width;
+			$width = $tmp;
 		}
 
-		$newimage = imlib_create_rotated_image($dst, $rotate);
-		
-		$n_w = imlib_image_get_width($newimage);
-		$n_h = imlib_image_get_height($newimage);
+		if($type == "thumbnail")
+		{
+			$newimage = imlib_load_image($tmp_file_rotated);
+			$n_w = imlib_image_get_width($newimage);
+			$n_h = imlib_image_get_height($newimage);
 
-		$newimage = imlib_create_cropped_image($newimage, intval(($n_w-$w)/2)+2, intval(($n_h-$h)/2)+1, $w, $h);
-		imlib_free_image($dst);
-		$dst = $newimage;
+			$newimage = imlib_create_cropped_image($newimage, ($n_w-$width)/2, ($n_h-$height)/2, $width, $height);
+		}
+		else
+		{
+			$newimage = imlib_create_rotated_image($src, $rotate);
+			$n_w = imlib_image_get_width($newimage);
+			$n_h = imlib_image_get_height($newimage);
+
+			$newimage = imlib_create_cropped_image($newimage, ($n_w-$width)/2+2, ($n_h-$height)/2+1, $width, $height);
+		}
+		
+		$dst = imlib_create_cropped_scaled_image($newimage, 0,0, $width,$height,$w, $h);
 	}
 
 	// dump as JPEG to the browser
@@ -197,6 +220,11 @@ else
 	{
 		unlink($tmp_file);
 	}
+	if (file_exists($tmp_file_rotated))
+	{
+		unlink($tmp_file_rotated);
+	}
 
 }
+
 ?>

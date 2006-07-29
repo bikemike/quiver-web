@@ -25,10 +25,16 @@ if($delay > 0)
 <html>
 <head><title></title>
 <link REL="stylesheet" type="text/css" href="stylesheet.css" />
+</head>
+<body>
 <center>
 <?
 
 showNavBar($image, $images, $dir, $type, $view);
+
+?></center><?
+if ($dir != "") echo "Album: " . $dir;
+?><center><?
 
 if ($type != "original")
 {
@@ -57,6 +63,7 @@ if ($type!="original")
 	print "<a href=\"$PHP_SELF?image=$image&dir=$dir&view=$view&type=$type&rotate=270\">270</a>";
 	*/
 }
+
 else print "<center>" . getImageHTML("$dir/$image","original",$view, $rotate) . "</center>";
 print "<br><br>";
 

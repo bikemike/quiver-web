@@ -219,16 +219,12 @@ function getImageHTML ($filePath,$type, $view, $rotate="") {
 		$exif = @exif_read_data ($realPath,'IFD0');
 		$orientation = $exif['Orientation'];
 		if ($orientation == 6){
-			$rotate += 90;
-		} elseif ($orientation == 1){
-			$rotate += 0;
+			$rotate = 90;
 		} elseif ($orientation == 3){
-			$rotate += 180;
+			$rotate = 180;
 		} elseif ($orientation == 8){
-			$rotate += 270;
+			$rotate = 270;
 		}
-		else
-			$rotate += 0;
 	}
 
 	if (is_dir($realPath)){
@@ -527,10 +523,28 @@ function getThumbnailImage ($dir,$file,$rotate=""){
 
 	$realPath = addPaths($GLOBALS['picture_dir'] , addPaths($dir,$file) );
 
+	$tmp_file = "/tmp/exif_img_" . randomNum(10);
 	if(getFileType($file) == "image")
-		$size = getimagesize ($realPath) or $size = Array($thumbnail_size,$thumbnail_size*3/4);
+	{
+		$thumb=exif_thumbnail($realPath,$wid,$hei,$tp);
+	}
+	if ($thumb)
+	{
+		$fhand = @fopen($tmp_file,"w+");
+		if ($fhand)
+		{
+			fwrite($fhand,$thumb);
+			fclose($fhand);
+			$size = getimagesize ($tmp_file) or $size = Array($thumbnail_size,$thumbnail_size*3/4);
+		}
+	}
 	else
-		$size = Array($thumbnail_size,$thumbnail_size*3/4);
+	{
+		if(getFileType($file) == "image")
+			$size = getimagesize ($realPath) or $size = Array($thumbnail_size,$thumbnail_size*3/4);
+		else
+			$size = Array($thumbnail_size,$thumbnail_size*3/4);
+	}
 	
 	$ratio = $size[1] / $size[0];
 	
@@ -579,7 +593,6 @@ function getOriginalImage ($dir,$file,$rotate=""){
 		$width = $size[1];
 		$height = $size[0];
 	}
- 
 
 	$path_parts = pathinfo($_SERVER['SCRIPT_FILENAME']);
 	if ($rotate)
