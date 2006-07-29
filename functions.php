@@ -526,7 +526,7 @@ function getThumbnailImage ($dir,$file,$rotate=""){
 	$tmp_file = "/tmp/exif_img_" . randomNum(10);
 	if(getFileType($file) == "image")
 	{
-		$thumb=exif_thumbnail($realPath,$wid,$hei,$tp);
+		$thumb=@exif_thumbnail($realPath,$wid,$hei,$tp);
 	}
 	if ($thumb)
 	{
