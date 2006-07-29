@@ -13,6 +13,9 @@ $prev = getPrevImage($image,$images);
 $next = getNextImage($image,$images);
 $arr = split ("/",$_SERVER['SCRIPT_FILENAME']);
 
+$dir = str_replace("\\","",$dir);
+$image = str_replace("\\","",$image);
+
 if($image == NULL)
 	$image = $images[0];
 if($image == NULL)
