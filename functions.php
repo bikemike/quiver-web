@@ -25,7 +25,7 @@ function getFileType($filename)
 
 function showCopyright()
 {
-	echo "php script by <a href=\"http://mike.dyndns.org/\">mike</a> and <a href=\"http://donn.dyndns.org/\">donn</a> morrison<br>Copyright &copy; 2006";
+	echo "php picture script by <a href=\"http://mike.yi.org/\">mike</a> and <a href=\"http://donn.dyndns.org/\">donn</a> morrison<br>Copyright &copy; 2006";
 }
 
 function randomNum($numDigits)
@@ -136,14 +136,14 @@ function showNavBar($image, $images, $dir, $type, $view)
 	
 	if($prev_dir)
 	{
-		$images = getImageList($prev_dir);
+//		$images = getImageList($prev_dir);
 		$prev_dir = "<a href=\"$PHP_SELF?dir=$prev_dir&view=$view\">&lt; prev album</a>";
 	}
 	else
 		$prev_dir = "&lt; prev album";
 	if($next_dir)
 	{
-		$images = getImageList($next_dir);
+//		$images = getImageList($next_dir);
 		$next_dir = "<a href=\"$PHP_SELF?dir=$next_dir&view=$view\">next album &gt;</a>";
 	}
 	else
@@ -375,8 +375,8 @@ function showDirectoryIndex ($dir,$dirs, $view){
 	$color = "odd";
 	for ($i=0;$i< sizeof($dirs) ; $i++){
 
-		$num_pics = count(getImageList($full_dir."/".$dirs[$i],1));
-		$num_dirs = count(getDirectoryList($full_dir."/".$dirs[$i],1));
+		$num_pics = count(getImageList($full_dir."/".$dirs[$i],false));
+		$num_dirs = count(getDirectoryList($full_dir."/".$dirs[$i]));
 		print "<tr class=\"$color\"><td><a href=\"$PHP_SELF?dir=$dir/$dirs[$i]&view=$view\">";
 		print getImageHTML($full_dir. "/" . $dirs[$i],"folder", $view);
 		print "</a></td><td>";
@@ -393,10 +393,11 @@ function showDirectoryIndex ($dir,$dirs, $view){
 		if (!$num_dirs && !$num_pics)
 			print "empty";
 		print"</td><td>";
+		if($dir != "") $dir = $dir . "/";
 		if($dirs[$i] != "..")
-			print "<a href=\"$PHP_SELF?dir=$dir/$dirs[$i]&view=$view\">" . $dirs[$i] . "</a></td></tr>";
+			print "<a href=\"$PHP_SELF?dir=$dir$dirs[$i]&view=$view\">" . $dirs[$i] . "</a></td></tr>";
 		else
-			print "<a href=\"$PHP_SELF?dir=$dir/$dirs[$i]&view=$view\">up a level</a></td><!--<td>&nbsp;</td>--></tr>";
+			print "<a href=\"$PHP_SELF?dir=$dir$dirs[$i]&view=$view\">up a level</a></td><!--<td>&nbsp;</td>--></tr>";
 
 		if ($color == "odd"){
 			$color = "even";
@@ -512,7 +513,30 @@ function getSmallImage ($dir,$file,$rotate="")
 		$imgsrch = $width;
 	}
 	if (file_exists($smallPath)) 
+	{
+		$cachedsize = getimagesize($smallPath);
+		// Check that the cached size (small) size is correct, except when the original size is less than $small_size, and when the cached size does not equal the original size
+		$regen = 0;
+		if(!($cachedsize[0] == $small_size || $cachedsize[1] == $small_size))
+		{
+		//	print "cached image size != small_size<br>";
+ 			if($size[0] >= $small_size || $size[1] >= $small_size)
+			{
+		//		print "orig size >= small_size<br>";
+				$regen = 1;
+			}
+			else
+				$regen = 0;
+		}
+
+		if($regen)
+		{
+			// Regenerate, user may have changed the value for $small_size
+		//	print "regenerating";
+			return "<img class=small src=\"getpic.php?cmd=store&type=small&w=$width&h=$height&image=$file&dir=$dir&rotate=$rotate\" width=$width height=$height\">";
+		}
 		return "<img class=small src=\"$smallPath\" width=$width height=$height\">";
+	}
 	else
 		return "<img class=small src=\"getpic.php?cmd=store&type=small&w=$width&h=$height&image=$file&dir=$dir&rotate=$rotate\" width=$width height=$height\">";
 }
@@ -544,6 +568,10 @@ function getThumbnailImage ($dir,$file,$rotate=""){
 			$size = getimagesize ($realPath) or $size = Array($thumbnail_size,$thumbnail_size*3/4);
 		else
 			$size = Array($thumbnail_size,$thumbnail_size*3/4);
+	}
+	if(file_exists($tmp_file))
+	{
+		unlink($tmp_file);
 	}
 	
 	$ratio = $size[1] / $size[0];
@@ -762,22 +790,75 @@ function addPaths($path1,$path2,$separator="/")
 	}
 }
 
-function getImageList ($dir){
+function getImageList ($dir, $sort = true){
 	$dir = addPaths($GLOBALS['picture_dir'] , $dir);
+	$sortby = $GLOBALS['options_sortby'];
 	$images = array(); //array to hold image list
+	
+//	print "sortby = $sortby<br>\n";
 	
 	if ($handle = @opendir($dir)) {
 		readdir($handle);
 		readdir($handle);
 
-		while (false !== ($file = readdir($handle))) {
-			if (!is_dir(addPaths($dir,$file)))
+		if($sortby == 'date' && $sort)
+		{
+			$datedimages = array();
+			while (false !== ($file = readdir($handle))) {
+				if(!is_dir(addPaths($dir,$file)))
+				{
+					$realPath = addPaths($dir , $file);
+					$exif = @exif_read_data ($realPath,'IFD0');
+					$date = $exif['DateTimeOriginal'];
+					if(!$date)
+					{
+						// fall back to modification time if no exif date exists
+						$timestamp = filemtime($realPath);
+					}
+					else
+					{
+						$date[4] = '-';
+						$date[7] = '-';
+						$timestamp = strtotime($date);
+					}
+		//			print "$file / $date / $timestamp<br>\n";
+					$datedimages[$file] = $timestamp;
+				}
+			}
+
+		//	print "<hr>";
+		//	print_r($datedimages);
+		//	print "<hr>";
+			asort($datedimages);
+		//	print_r($datedimages);
+		//	print "<hr>";
+
+			foreach ($datedimages as $k => $v)
 			{
-				array_push($images,$file);
+				array_push($images, $k);
+			}
+		}
+		elseif($sortby == 'filename')
+		{
+			while (false !== ($file = readdir($handle))) {
+				if (!is_dir(addPaths($dir,$file)))
+				{
+					array_push($images,$file);
+				}
+			}
+			sort($images);
+		}
+		else
+		{
+			// No sorting...probably should merge these last two blocks
+			while (false !== ($file = readdir($handle))) {
+				if (!is_dir(addPaths($dir,$file)))
+				{
+					array_push($images,$file);
+				}
 			}
 		}
 	}
-	sort($images);
 	return $images;
 }
 

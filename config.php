@@ -38,4 +38,6 @@ $mplayer_params = $config['movie']['mplayer_params'];
 $comment_dir = $data_dir . $separator . "comments";
 $commentlog = $data_dir . $separator . "comment_log.txt";
 
+$options_sortby = $config['options']['sortby'];
+
 ?>

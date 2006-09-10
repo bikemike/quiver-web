@@ -7,6 +7,8 @@ $delay = $_GET['delay'];
 $type = $_GET['type'];
 $view = $_GET['view'];
 
+if($type == "") $type = "small";
+
 $dir = getValidDirectory($dir);
 $images = getImageList($dir);
 $prev = getPrevImage($image,$images);
@@ -35,11 +37,7 @@ if($delay > 0)
 
 showNavBar($image, $images, $dir, $type, $view);
 
-?></center><?
-if ($dir != "") echo "Album: " . $dir;
-?><center><?
-
-if ($type != "original")
+if ($type == "small")
 {
 	print "<table cellspacing=1 cellpadding=5 width=100%>\n";
 	print "<tr><th>index</th><th>$dir</th></tr>\n";
@@ -47,57 +45,127 @@ if ($type != "original")
 	showSimpleIndex($dir,$image,$images,$view);
 	print "</td><td valign=top>\n";
 	print "<center>\n";
+	print getImageHTML("$dir/$image","small", $view, $rotate);
+	print "</center>";
+	print "<br><br>";
+
+	$lines = @file(addPaths($comment_dir,addPaths($dir,$image)) . ".cmt");
+	if($lines){
+		print "<b>comments:</b><br><br>";
+		foreach($lines as $line_num => $line){
+		    print $line . "<br>";
+		}
+		print "<br>";
+	}
+	?>
+	<b>post a comment:</b><br>
+	<form action=comment.php method=post>
+	<?
+	    print "<input type=hidden name=image value=\"$image\">";
+	    print "<input type=hidden name=dir value=\"$dir\">";
+	    print "<input type=hidden name=type value=\"$type\">";
+	    print "<input type=hidden name=view value=\"$view\">";
+	?>
+
+	name: <input type=text name=name size=10>
+	comment: <input type=text name=comment size=30>
+	<input type=submit name=sumbit value=post>
+	</form>
+	</td></tr>
+	</table>
+	<?
 }
-else
+elseif ($type == "original")
 {
 	print "<table cellspacing=1 cellpadding=5 width=100%>\n";
 	print "<tr><th>$dir</th></tr>\n";
 	print "<tr><td valign=top>\n";
-}
+	print "<center>" . getImageHTML("$dir/$image","original",$view, $rotate) . "</center>";
+	print "<br><br>";
 
-if ($type!="original")
-{
-	print getImageHTML("$dir/$image","small", $view, $rotate);
-	/*
-	print "<br>rotate: ";
-	print "<a href=\"$PHP_SELF?image=$image&dir=$dir&view=$view&type=$type\">normal</a> | ";
-	print "<a href=\"$PHP_SELF?image=$image&dir=$dir&view=$view&type=$type&rotate=90\">90</a> | ";
-	print "<a href=\"$PHP_SELF?image=$image&dir=$dir&view=$view&type=$type&rotate=180\">180</a> | ";
-	print "<a href=\"$PHP_SELF?image=$image&dir=$dir&view=$view&type=$type&rotate=270\">270</a>";
-	*/
-}
-
-else print "<center>" . getImageHTML("$dir/$image","original",$view, $rotate) . "</center>";
-print "<br><br>";
-
-if($type != "original")
-print "</center>";
-
-$lines = @file(addPaths($comment_dir,addPaths($dir,$image)) . ".cmt");
-if($lines){
+	$lines = @file(addPaths($comment_dir,addPaths($dir,$image)) . ".cmt");
+	if($lines){
 	print "<b>comments:</b><br><br>";
 	foreach($lines as $line_num => $line){
 	    print $line . "<br>";
 	}
 	print "<br>";
-}
-?>
-<b>post a comment:</b><br>
-<form action=comment.php method=post>
-<?
-    print "<input type=hidden name=image value=\"$image\">";
-    print "<input type=hidden name=dir value=\"$dir\">";
-    print "<input type=hidden name=type value=\"$type\">";
-    print "<input type=hidden name=view value=\"$view\">";
-?>
+	}
+	?>
+	<b>post a comment:</b><br>
+	<form action=comment.php method=post>
+	<?
+	print "<input type=hidden name=image value=\"$image\">";
+	print "<input type=hidden name=dir value=\"$dir\">";
+	print "<input type=hidden name=type value=\"$type\">";
+	print "<input type=hidden name=view value=\"$view\">";
+	?>
 
-name: <input type=text name=name size=10>
-comment: <input type=text name=comment size=30>
-<input type=submit name=sumbit value=post>
-</form>
-</td></tr>
-</table>
-<?
+	name: <input type=text name=name size=10>
+	comment: <input type=text name=comment size=30>
+	<input type=submit name=sumbit value=post>
+	</form>
+	</td></tr>
+	</table>
+	<?
+}
+elseif ($type == "4x4")
+{
+	$next1 = getNextImage($image,$images);
+	$next2 = getNextImage($next1,$images);
+	$next3 = getNextImage($next2,$images);
+	print "<table cellspacing=1 cellpadding=5 width=100%>\n";
+	print "<tr><th colspan=2>$dir</th></tr>\n";
+	print "<tr><td width=50% align=right valign=bottom>\n";
+	print getImageHTML("$dir/$image","4x4", $view, $rotate);
+	print "</td><td align=left valign=bottom>\n";
+	print getImageHTML("$dir/$next1","4x4", $view, $rotate);
+	print "</td></tr>\n";
+	print "<tr><td align=right valign=top>\n";
+	print getImageHTML("$dir/$next2","4x4", $view, $rotate);
+	print "</td><td align=left valign=top>\n";
+	print getImageHTML("$dir/$next3","4x4", $view, $rotate);
+	print "</td></tr></table>\n";
+}
+elseif ($type == "allpage")
+{
+	for($i = 0; $i<count($images); $i++)
+	{
+		$image = $images[$i];
+		print getImageHTML("$dir/$image", "small", $view, $rotate) . "<br>\n"; // problem with $rotate
+
+		print "<br><br>";
+
+		$lines = @file(addPaths($comment_dir,addPaths($dir,$image)) . ".cmt");
+		if($lines){
+			print "<b>comments:</b><br><br>";
+			foreach($lines as $line_num => $line){
+			    print $line . "<br>";
+			}
+			print "<br>";
+		}
+		?>
+		<b>post a comment:</b><br>
+		<form action=comment.php method=post>
+		<?
+		    print "<input type=hidden name=image value=\"$image\">";
+		    print "<input type=hidden name=dir value=\"$dir\">";
+		    print "<input type=hidden name=type value=\"$type\">";
+		    print "<input type=hidden name=view value=\"$view\">";
+		?>
+
+		name: <input type=text name=name size=10>
+		comment: <input type=text name=comment size=30>
+		<input type=submit name=sumbit value=post>
+		</form>
+		<?
+	}
+	?>
+	</td></tr>
+	</table>
+	<?
+}
+
 showNavBar($image, $images, $dir, $type, $view);
 showCopyright();
 ?>
