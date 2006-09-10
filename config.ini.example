@@ -4,6 +4,10 @@
 [directory]
 pictures=/mnt/storage/pictures
 
+[options]
+#sortby can be 'date' or 'filename'
+sortby=date
+
 [image_thumbnail]
 width=128
 height=128
