@@ -65,6 +65,11 @@ if(getFileType($image) == "video")
 else
 {
 	$src = imlib_load_image($img_file);
+	if(!$src)
+	{
+		// Permission problem...most likely
+		return;
+	}
 } 
 
 // get original image dimensions
