@@ -408,6 +408,35 @@ function showDirectoryIndex ($dir,$dirs, $view){
 	print "</table>"; 
 }
 
+function showDirectoryIndexRss ($dir,$dirs, $view){
+	$full_dir = $dir;
+	$dir = substr($dir,strlen($GLOBALS['base_directory']));
+	
+	?>
+<rss version="2.0">
+<channel>
+<title><? echo $_SERVER['SERVER_NAME']; ?> - Pictures index</title>
+<link><? echo "http://".$_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF']; ?></link>
+<description><? echo $_SERVER['SERVER_NAME']; ?> - Pictures index</description>
+<?
+	for ($i=0;$i< 10 ; $i++)
+	{
+		if($dirs[$i] != "..")
+		{
+			if($dir != "") $dir = $dir . "/";
+			print "<item>\n";
+			print "<title>".$dir.$dirs[$i]."</title>\n";
+			print "<link>http://".$_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF'] ."?dir=".urlencode($dir.$dirs[$i])."</link>\n";
+			print "<description>".$dir.$dirs[$i]."</description>\n";
+			print "<guid>http://".$_SERVER['SERVER_NAME'].$_SERVER['PHP_SELF'] ."?dir=".urlencode($dir.$dirs[$i])."</guid>\n";
+			print "</item>\n";
+		}
+		
+	}
+	print "</channel>\n";
+	print "</rss>"; 
+}
+
 function showDetailedIndex ($dir,$list,$view){
 	$thumbnail_dir = $GLOBALS['thumbnail_dir'];
 	$picture_dir = $GLOBALS['picture_dir'];
@@ -529,6 +558,9 @@ function getSmallImage ($dir,$file,$rotate="")
 				$regen = 0;
 		}
 
+		if(filemtime($smallPath) < filemtime($realPath))
+			$regen = 1;
+
 		if($regen)
 		{
 			// Regenerate, user may have changed the value for $small_size
@@ -545,6 +577,7 @@ function getThumbnailImage ($dir,$file,$rotate=""){
 	$thumbnail_size = $GLOBALS['thumbnail_size'];
 	$thumbnail_dir = $GLOBALS['thumbnail_dir'];
 
+	$thumbPath = addPaths($thumbnail_dir,addPaths($dir,$file));
 	$realPath = addPaths($GLOBALS['picture_dir'] , addPaths($dir,$file) );
 
 	$tmp_file = "/tmp/exif_img_" . randomNum(10);
@@ -599,7 +632,18 @@ function getThumbnailImage ($dir,$file,$rotate=""){
 	$path_parts = pathinfo($_SERVER['SCRIPT_FILENAME']);
 
 	if (file_exists(addPaths($thumbnail_dir,addPaths($dir,$file)))) 
+	{
+		if(filemtime($thumbPath) < filemtime($realPath))
+			$regen = 1;
+
+		if($regen)
+		{
+			// Regenerate, user may have changed the value for $small_size
+		//	print "regenerating";
+			return "<img class=small src=\"getpic.php?cmd=store&type=small&w=$width&h=$height&image=$file&dir=$dir&rotate=$rotate\" width=$width height=$height\">";
+		}
 		return "<img class=thumbnail src=\"" . addPaths($thumbnail_dir,addPaths($dir,$file)) . "\" width=$width height=$height\">";
+	}
 	else
 		return "<img class=thumbnail src=\"getpic.php?cmd=store&type=thumbnail&w=$width&h=$height&image=$file&dir=$dir&rotate=$rotate\" width=$width height=$height\">";
 }

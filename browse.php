@@ -1,5 +1,19 @@
 <?php
 require_once("functions.php");
+// fix directory information
+$dir = $_GET['dir'];
+$dir = getValidDirectory($dir);
+$view = $_GET['view'];
+$imagelist = getImageList($dir);
+$dirs = getDirectoryList($dir);
+
+if($_REQUEST['format'] == "rss")
+{
+	Header("Content-type: application/rss+xml");
+	showDirectoryIndexRss($dir,$dirs,$view);
+	return;
+}
+
 ?>
 <html>
 <head><title></title>
@@ -8,13 +22,6 @@ require_once("functions.php");
 <body>
 <center>
 <?
-// fix directory information
-$dir = $_GET['dir'];
-$dir = getValidDirectory($dir);
-$view = $_GET['view'];
-$imagelist = getImageList($dir);
-$dirs = getDirectoryList($dir);
-
 showNavBar(NULL, NULL, $dir, $type, $view);
 // print the directory listing
 print "<table cellspacing=1 cellpadding=5 width=100%><tr><td>";
