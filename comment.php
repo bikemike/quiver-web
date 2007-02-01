@@ -1,10 +1,14 @@
 <?php
 require_once("functions.php");
 
-$comment = $_POST['comment'];
+if (isset($_POST['antispam'])) {
+    $antispam = $_POST['antispam'];
+    $name = $_POST[$antispam . 'name'];
+    $comment = $_POST[$antispam . 'comment'];
+}
+
 $dir = stripslashes($_POST['dir']);
 $image = $_POST['image'];
-$name = $_POST['name'];
 $type = $_POST['type'];
 $view = $_POST['view'];
     if($comment)

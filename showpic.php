@@ -6,6 +6,7 @@ $image = $_GET['image'];
 $delay = $_GET['delay'];
 $type = $_GET['type'];
 $view = $_GET['view'];
+$gift = $_GET['gift'];
 
 if($type == "") $type = "small";
 
@@ -59,17 +60,27 @@ if ($type == "small")
 	}
 	?>
 	<b>post a comment:</b><br>
-	<form action=comment.php method=post>
+	<form id=commentform action=comment.php method=post>
 	<?
 	    print "<input type=hidden name=image value=\"$image\">";
 	    print "<input type=hidden name=dir value=\"$dir\">";
 	    print "<input type=hidden name=type value=\"$type\">";
 	    print "<input type=hidden name=view value=\"$view\">";
+            print "<input type=hidden name=dir value=\"$dir\">";
+            for ($i=0; $i<8; $i++)
+               $antispam .= chr(mt_rand(65, 90));
 	?>
 
-	name: <input type=text name=name size=10>
-	comment: <input type=text name=comment size=30>
+        name: <input type=text name=<? echo $antispam;?>name size=10> comment: 
+	<input type=text name=<? echo $antispam;?>comment size=30>
 	<input type=submit name=sumbit value=post>
+        <input type="hidden" name="antispam" value="" id=antispam>
+<script type="text/javascript">
+    document.getElementById('commentform').style.display = 'block';
+    document.getElementById('antispam').value = '<?echo $antispam; ?>';
+</script>
+<noscript>Sorry, you need JavaScript to post comments.</noscript>
+
 	</form>
 	</td></tr>
 	</table>

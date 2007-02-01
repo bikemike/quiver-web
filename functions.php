@@ -640,7 +640,7 @@ function getThumbnailImage ($dir,$file,$rotate=""){
 		{
 			// Regenerate, user may have changed the value for $small_size
 		//	print "regenerating";
-			return "<img class=small src=\"getpic.php?cmd=store&type=small&w=$width&h=$height&image=$file&dir=$dir&rotate=$rotate\" width=$width height=$height\">";
+			return "<img class=small src=\"getpic.php?cmd=store&type=thumbnail&w=$width&h=$height&image=$file&dir=$dir&rotate=$rotate\" width=$width height=$height\">";
 		}
 		return "<img class=thumbnail src=\"" . addPaths($thumbnail_dir,addPaths($dir,$file)) . "\" width=$width height=$height\">";
 	}
