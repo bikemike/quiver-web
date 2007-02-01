@@ -882,17 +882,7 @@ function getImageList ($dir, $sort = true){
 				array_push($images, $k);
 			}
 		}
-		elseif($sortby == 'filename')
-		{
-			while (false !== ($file = readdir($handle))) {
-				if (!is_dir(addPaths($dir,$file)))
-				{
-					array_push($images,$file);
-				}
-			}
-			sort($images);
-		}
-		else
+		elseif($sortby == 'none')
 		{
 			// No sorting...probably should merge these last two blocks
 			while (false !== ($file = readdir($handle))) {
@@ -901,6 +891,16 @@ function getImageList ($dir, $sort = true){
 					array_push($images,$file);
 				}
 			}
+		}
+		else //if($sortby == 'filename') // sort by filename by default
+		{
+			while (false !== ($file = readdir($handle))) {
+				if (!is_dir(addPaths($dir,$file)))
+				{
+					array_push($images,$file);
+				}
+			}
+			sort($images);
 		}
 	}
 	return $images;

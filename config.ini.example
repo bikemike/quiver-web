@@ -5,7 +5,7 @@
 pictures=/mnt/storage/pictures
 
 [options]
-#sortby can be 'date' or 'filename'
+#sortby can be 'date', 'filename', or 'none'. defaults to 'filename' if unset
 sortby=date
 
 [image_thumbnail]
