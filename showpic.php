@@ -59,6 +59,7 @@ elseif ($type == "original")
 	print "<tr><td valign=top>\n";
 	print "<center>" . getImageHTML("$dir/$image","original",$view, $rotate) . "</center>";
 	print "<br><br>";
+
 	showComments($image, $images, $dir, $type, $view);
 }
 elseif ($type == "4x4")
