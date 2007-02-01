@@ -105,3 +105,7 @@ h1
 	background: #eef;
 	color:blue;
 }
+.copyright{
+        font-size: 9pt;
+}
+

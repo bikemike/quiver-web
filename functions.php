@@ -25,7 +25,7 @@ function getFileType($filename)
 
 function showCopyright()
 {
-	echo "php picture script by <a href=\"http://mike.yi.org/\">mike</a> and <a href=\"http://donn.dyndns.org/\">donn</a> morrison<br>Copyright &copy; 2006";
+	echo "<div class=copyright>quiver-web by <a href=\"http://mike.yi.org/\">mike</a> and <a href=\"http://donn.dyndns.org/\">donn</a> morrison<br>Copyright &copy; 2007</div>";
 }
 
 function randomNum($numDigits)
