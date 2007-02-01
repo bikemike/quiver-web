@@ -50,41 +50,7 @@ if ($type == "small")
 	print "</center>";
 	print "<br><br>";
 
-	$lines = @file(addPaths($comment_dir,addPaths($dir,$image)) . ".cmt");
-	if($lines){
-		print "<b>comments:</b><br><br>";
-		foreach($lines as $line_num => $line){
-		    print $line . "<br>";
-		}
-		print "<br>";
-	}
-	?>
-	<b>post a comment:</b><br>
-	<form id=commentform action=comment.php method=post>
-	<?
-	    print "<input type=hidden name=image value=\"$image\">";
-	    print "<input type=hidden name=dir value=\"$dir\">";
-	    print "<input type=hidden name=type value=\"$type\">";
-	    print "<input type=hidden name=view value=\"$view\">";
-            print "<input type=hidden name=dir value=\"$dir\">";
-            for ($i=0; $i<8; $i++)
-               $antispam .= chr(mt_rand(65, 90));
-	?>
-
-        name: <input type=text name=<? echo $antispam;?>name size=10> comment: 
-	<input type=text name=<? echo $antispam;?>comment size=30>
-	<input type=submit name=sumbit value=post>
-        <input type="hidden" name="antispam" value="" id=antispam>
-<script type="text/javascript">
-    document.getElementById('commentform').style.display = 'block';
-    document.getElementById('antispam').value = '<?echo $antispam; ?>';
-</script>
-<noscript>Sorry, you need JavaScript to post comments.</noscript>
-
-	</form>
-	</td></tr>
-	</table>
-	<?
+	showComments($image, $images, $dir, $type, $view);
 }
 elseif ($type == "original")
 {
@@ -93,32 +59,7 @@ elseif ($type == "original")
 	print "<tr><td valign=top>\n";
 	print "<center>" . getImageHTML("$dir/$image","original",$view, $rotate) . "</center>";
 	print "<br><br>";
-
-	$lines = @file(addPaths($comment_dir,addPaths($dir,$image)) . ".cmt");
-	if($lines){
-	print "<b>comments:</b><br><br>";
-	foreach($lines as $line_num => $line){
-	    print $line . "<br>";
-	}
-	print "<br>";
-	}
-	?>
-	<b>post a comment:</b><br>
-	<form action=comment.php method=post>
-	<?
-	print "<input type=hidden name=image value=\"$image\">";
-	print "<input type=hidden name=dir value=\"$dir\">";
-	print "<input type=hidden name=type value=\"$type\">";
-	print "<input type=hidden name=view value=\"$view\">";
-	?>
-
-	name: <input type=text name=name size=10>
-	comment: <input type=text name=comment size=30>
-	<input type=submit name=sumbit value=post>
-	</form>
-	</td></tr>
-	</table>
-	<?
+	showComments($image, $images, $dir, $type, $view);
 }
 elseif ($type == "4x4")
 {
@@ -147,29 +88,8 @@ elseif ($type == "allpage")
 
 		print "<br><br>";
 
-		$lines = @file(addPaths($comment_dir,addPaths($dir,$image)) . ".cmt");
-		if($lines){
-			print "<b>comments:</b><br><br>";
-			foreach($lines as $line_num => $line){
-			    print $line . "<br>";
-			}
-			print "<br>";
-		}
-		?>
-		<b>post a comment:</b><br>
-		<form action=comment.php method=post>
-		<?
-		    print "<input type=hidden name=image value=\"$image\">";
-		    print "<input type=hidden name=dir value=\"$dir\">";
-		    print "<input type=hidden name=type value=\"$type\">";
-		    print "<input type=hidden name=view value=\"$view\">";
-		?>
+		showComments($image, $images, $dir, $type, $view);
 
-		name: <input type=text name=name size=10>
-		comment: <input type=text name=comment size=30>
-		<input type=submit name=sumbit value=post>
-		</form>
-		<?
 	}
 	?>
 	</td></tr>
@@ -179,6 +99,50 @@ elseif ($type == "allpage")
 
 showNavBar($image, $images, $dir, $type, $view);
 showCopyright();
+
+function showComments($image, $images, $dir, $type, $view)
+{
+	?><div class=comments><?
+	$comment_dir = $GLOBALS['comment_dir'];
+                $lines = @file(addPaths($comment_dir,addPaths($dir,$image)) . ".cmt");
+                if($lines){
+                        print "<b>comments:</b><br><br>";
+                        foreach($lines as $line_num => $line){
+                            print $line . "<br>";
+                        }
+                        print "<br>";
+                }
+                ?>
+        <b>post a comment:</b><br>
+        <form id=commentform action=comment.php method=post>
+        <?
+            print "<input type=hidden name=image value=\"$image\">";
+            print "<input type=hidden name=dir value=\"$dir\">";
+            print "<input type=hidden name=type value=\"$type\">";
+            print "<input type=hidden name=view value=\"$view\">";
+            print "<input type=hidden name=dir value=\"$dir\">";
+            for ($i=0; $i<8; $i++)
+               $antispam .= chr(mt_rand(65, 90));
+        ?>
+
+        name: <input type=text name=<? echo $antispam;?>name size=10> comment:
+        <input type=text name=<? echo $antispam;?>comment size=30>
+        <input type=submit name=sumbit value=post>
+        <input type="hidden" name="antispam" value="" id=antispam>
+<script type="text/javascript">
+    document.getElementById('commentform').style.display = 'block';
+    document.getElementById('antispam').value = '<?echo $antispam; ?>';
+</script>
+<noscript>Sorry, you need JavaScript to post comments.</noscript>
+
+        </form>
+        </td></tr>
+        </table>
+	</div>
+        <?
+
+}
+
 ?>
 
 </body>
