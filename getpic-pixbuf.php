@@ -27,7 +27,8 @@ if(getFileType($image) == "video")
 
 	// mplayer generates a frame
 	$cwd = getcwd();
-	$mplayer_cmd = "cd $tmppath; $mplayer_path $mplayer_params '$cwd/$img_file' > /dev/null";
+	$file_escaped = escapeshellarg("$cwd/$img_file");
+	$mplayer_cmd = "cd $tmppath; $mplayer_path $mplayer_params $file_escaped > /dev/null";
 	
 	system($mplayer_cmd);
 	$img_file = $tmpfile;
@@ -121,10 +122,6 @@ else
 				GDK_INTERP_BILINEAR,
 				128);
 		}
-		else
-		{
-			echo "could not load watermark\n";
-		}
 	}
 
 	// dump as JPEG to the browser
@@ -138,10 +135,6 @@ else
 				makeDirectory ($thumbdir);
 			//imlib_save_image($dst,$thumb_file, $err, $thumbnail_quality);
 			$success = pixbuf_dump_and_save($pixbuf,$thumb_file);
-			if (!$success)
-			{
-				echo "write failed\n";
-			}
 
 			chmod ($thumb_file,0664);
 		}
