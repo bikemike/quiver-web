@@ -150,7 +150,7 @@ else
 			if (false == file_exists($smalldir)) 
 				makeDirectory ($smalldir);
 			//imlib_save_image($dst,$small_file, $err, $small_quality);
-			pixbuf_dump_and_save($pixbuf,$thumb_file);
+			pixbuf_dump_and_save($pixbuf,$small_file);
 			chmod ($small_file,0664);
 		}
 		else
