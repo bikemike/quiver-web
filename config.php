@@ -23,6 +23,12 @@ if (!file_exists($picture_dir))
 	}
 }
 
+$image_backend = $config['general']['image_backend'];
+if (!$image_backend)
+{
+	$image_backend = "imlib";
+}
+
 $thumbnail_dir = $data_dir . $separator . "thumbnail";
 $thumbnail_size = $config['image_thumbnail']['width'];
 $thumbnail_quality = $config['image_thumbnail']['quality'];

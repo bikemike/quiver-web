@@ -38,8 +38,8 @@ if ($type == "thumbnail")
 	// because they turn out really blurry with imlib
 	if ($rotate != 0)
 	{
-		$jpgtrancmd = "jpegtran -copy all -outfile " . $tmp_file_rotated . " -rotate " . $rotate . " " . $img_file;
-		`$jpgtrancmd > /dev/null 2>&1`;
+		$cmd = "jpegtran -copy all -outfile " . $tmp_file_rotated . " -rotate " . $rotate . " " . $img_file;
+		`$cmd > /dev/null 2>&1`;
 	}
 }
 
@@ -65,11 +65,6 @@ if(getFileType($image) == "video")
 else
 {
 	$src = imlib_load_image($img_file);
-	if(!$src)
-	{
-		// Permission problem...most likely
-		return;
-	}
 } 
 
 // get original image dimensions

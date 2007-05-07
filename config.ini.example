@@ -1,6 +1,13 @@
 [setup]
 ;complete=1
 
+[general]
+; backends available:
+; pixbuf, imlib, gd(not currently finished)
+; imlib requires php-imlib package
+; pixbuf requires php-pixbuf package
+image_backend=imlib
+
 [directory]
 pictures=/mnt/storage/pictures
 
